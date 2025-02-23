@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import contactImg from "../assets/images/contact-img.svg";
 import 'animate.css';
@@ -16,6 +16,16 @@ export const Contact = () => {
   const [formDetails, setFormDetails] = useState(formInitialDetails);
   const [buttonText, setButtonText] = useState('Send');
   const [status, setStatus] = useState({});
+
+  useEffect(() => {
+    if (status.message) {
+      const timer = setTimeout(() => {
+        setStatus({});
+      }, 5000); // 10 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
 
   const onFormUpdate = (category, value) => {
     setFormDetails({
@@ -134,7 +144,7 @@ export const Contact = () => {
                         <button type="submit"><span>{buttonText}</span></button>
                       </Col>
                     </Row>
-                     {status.message &&
+                    {status.message &&
                         <Col>
                           <p className={status.success === false ? "danger" : "success"}>{status.message}</p>
                         </Col>
