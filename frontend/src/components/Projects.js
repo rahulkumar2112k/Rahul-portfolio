@@ -9,7 +9,7 @@ import TrackVisibility from 'react-on-screen';
 
 export const Projects = () => {
 
-  const projects = [
+  const MiniProjects = [
     {
       title: "project is under development",
       description: "updated soon",
@@ -42,6 +42,24 @@ export const Projects = () => {
     },
   ];
 
+    const MajorProjects = [
+      {
+        title: "project is under development",
+        description: "updated soon",
+        imgUrl: projImg2,
+      },
+      {
+        title: "project is under development",
+        description: "updated soon",
+        imgUrl: projImg2,
+      },
+      {
+        title: "project is under development",
+        description: "updated soon",
+        imgUrl: projImg2,
+      },
+    ];
+
   return (
     <section className="project" id="projects">
       <Container>
@@ -55,20 +73,20 @@ export const Projects = () => {
                 <Tab.Container id="projects-tabs" defaultActiveKey="first">
                   <Nav variant="pills" className="nav-pills mb-5 justify-content-center align-items-center" id="pills-tab">
                     <Nav.Item>
-                      <Nav.Link eventKey="first">Major-Projects</Nav.Link>
+                      <Nav.Link eventKey="first">Mini-Projects</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="second">Mini-Projects</Nav.Link>
+                      <Nav.Link eventKey="second">Major-Projects</Nav.Link>
                     </Nav.Item>
-                    <Nav.Item>
+                    {/* <Nav.Item>
                       <Nav.Link eventKey="third">Tab 3</Nav.Link>
-                    </Nav.Item>
+                    </Nav.Item> */}
                   </Nav>
                   <Tab.Content id="slideInUp" className={isVisible ? "animate__animated animate__slideInUp" : ""}>
                     <Tab.Pane eventKey="first">
                       <Row>
                         {
-                          projects.map((project, index) => {
+                          MiniProjects.map((project, index) => {
                             return (
                               <ProjectCard
                                 key={index}
@@ -82,7 +100,7 @@ export const Projects = () => {
                     <Tab.Pane eventKey="second">
                     <Row>
                         {
-                          projects.map((project, index) => {
+                          MajorProjects.map((project, index) => {
                             return (
                               <ProjectCard
                                 key={index}
@@ -93,7 +111,7 @@ export const Projects = () => {
                         }
                       </Row>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="third">
+                    {/* <Tab.Pane eventKey="third">
                     <Row>
                         {
                           projects.map((project, index) => {
@@ -106,7 +124,7 @@ export const Projects = () => {
                           })
                         }
                       </Row>
-                    </Tab.Pane>
+                    </Tab.Pane> */}
                   </Tab.Content>
                 </Tab.Container>
               </div>}
