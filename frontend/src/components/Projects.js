@@ -3,6 +3,8 @@ import { ProjectCard } from "./ProjectCard";
 import projImg1 from "../assets/images/project-img1.png";
 import projImg2 from "../assets/images/project-img2.png";
 import projImg3 from "../assets/images/project-img3.png";
+import projImg4 from "../assets/images/project-img4.png";
+import projImg5 from "../assets/images/project-img5.png";
 import colorSharp2 from "../assets/images/color-sharp2.png";
 import 'animate.css';
 import TrackVisibility from 'react-on-screen';
@@ -11,24 +13,28 @@ export const Projects = () => {
 
   const MiniProjects = [
     {
-      title: "project is under development",
-      description: "updated soon",
-      imgUrl: projImg2,
+      title: "Culinary Canvas",
+      description: "An Indian traditional recipie sharing website",
+      imgUrl: projImg1,
+      projectLink: "https://rahulkumar2112k.github.io/Culinary_Canvas/",
     },
     {
-      title: "project is under development",
-      description: "updated soon",
-      imgUrl: projImg2,
+      title: "Amazon clone",
+      description: "A clone of Amazon's UI/UX using html, css, js",
+      imgUrl: projImg3,
+      projectLink: "https://rahulkumar2112k.github.io/Amazon-Clone/",
     },
     {
-      title: "project is under development",
-      description: "updated soon",
-      imgUrl: projImg2,
+      title: "BMI Calculator",
+      description: "A BMI calculator using html, css, js which calculates BMI of a person",
+      imgUrl: projImg4,
+      projectLink: "https://rahulkumar2112k.github.io/BMI_Calculator/",
     },
     {
-      title: "project is under development",
-      description: "updated soon",
-      imgUrl: projImg2,
+      title: "Number Guessing Game",
+      description: "A number guessing game using html, css, js",
+      imgUrl: projImg5,
+      projectLink: "https://rahulkumar2112k.github.io/Number-Guessing-Game/",
     },
     {
       title: "project is under development",
