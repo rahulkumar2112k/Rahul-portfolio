@@ -6,23 +6,22 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// ================= EMAIL CONFIG =================
+// ================= BREVO SMTP CONFIG =================
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // use TLS
+  host: process.env.SMTP_HOST,          // smtp-relay.brevo.com
+  port: process.env.SMTP_PORT,          // 587
+  secure: false,                        // TLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.SMTP_USER,        // 9e0a86001@smtp-brevo.com
+    pass: process.env.SMTP_PASS,        // SMTP KEY (xkeysib-...)
   },
 });
 
-// Verify email transporter
-transporter.verify((error, success) => {
+// Verify transporter
+transporter.verify((error) => {
   if (error) {
     console.error("❌ Email transporter error:", error);
   } else {
@@ -32,7 +31,7 @@ transporter.verify((error, success) => {
 
 // ================= ROUTES =================
 
-// Test route
+// Health check
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
@@ -41,21 +40,21 @@ app.get("/", (req, res) => {
 app.post("/contact", async (req, res) => {
   const { firstName, lastName, email, phone, message } = req.body;
 
-  // Validation
   if (!firstName || !lastName || !email || !phone || !message) {
-    return res
-      .status(400)
-      .json({ code: 400, status: "All fields are required." });
+    return res.status(400).json({
+      code: 400,
+      status: "All fields are required.",
+    });
   }
 
   try {
-    // 1️⃣ EMAIL TO YOU
+    // 1️⃣ Email to YOU
     await transporter.sendMail({
-      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
-      subject: "📩 New Contact Form Message",
+      from: `"Portfolio Contact" <${process.env.FROM_EMAIL}>`,
+      to: process.env.FROM_EMAIL,
+      subject: "📩 New Portfolio Contact Message",
       html: `
-        <h2>New Contact Message</h2>
+        <h3>New Contact Message</h3>
         <p><b>Name:</b> ${firstName} ${lastName}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Phone:</b> ${phone}</p>
@@ -64,9 +63,9 @@ app.post("/contact", async (req, res) => {
       `,
     });
 
-    // 2️⃣ AUTO-REPLY TO USER
+    // 2️⃣ Auto-reply to USER
     await transporter.sendMail({
-      from: `"Rahul Kumar" <${process.env.EMAIL_USER}>`,
+      from: `"Rahul Kumar" <${process.env.FROM_EMAIL}>`,
       to: email,
       subject: "Thanks for contacting me 🙌",
       html: `
@@ -74,7 +73,7 @@ app.post("/contact", async (req, res) => {
 
         <p>Thank you for reaching out through my portfolio website.</p>
 
-        <p>I’ve received your message and will get back to you as soon as possible.</p>
+        <p>I’ve received your message and will get back to you shortly.</p>
 
         <p><b>Your message:</b></p>
         <blockquote>${message}</blockquote>
@@ -91,7 +90,7 @@ app.post("/contact", async (req, res) => {
       status: "Message sent successfully",
     });
   } catch (error) {
-    console.error("❌ Email error:", error);
+    console.error("❌ Email send failed:", error);
     res.status(500).json({
       code: 500,
       status: "Email sending failed",
