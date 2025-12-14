@@ -11,23 +11,21 @@ app.use(express.json());
 
 // ================= BREVO SMTP CONFIG =================
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,          // smtp-relay.brevo.com
-  port: process.env.SMTP_PORT,          // 587
-  secure: false,                        // TLS
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT), // ensure number
+  secure: false, // TLS
   auth: {
-    user: process.env.SMTP_USER,        // 9e0a86001@smtp-brevo.com
-    pass: process.env.SMTP_PASS,        // SMTP KEY (xkeysib-...)
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+  connectionTimeout: 10000, // 10s
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
-// Verify transporter
-transporter.verify((error) => {
-  if (error) {
-    console.error("❌ Email transporter error:", error);
-  } else {
-    console.log("✅ Email transporter is ready");
-  }
-});
 
 // ================= ROUTES =================
 
