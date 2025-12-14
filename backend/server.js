@@ -1,39 +1,105 @@
 const express = require("express");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000' })); // Allow requests from React frontend
-app.use(express.json()); // Parse JSON request bodies
+app.use(cors());
+app.use(express.json());
 
-// POST route to handle form submissions
-app.post("/contact", (req, res) => {
-  console.log("Received data:", req.body); // Log the received data
-
-  const { firstName, lastName, email, phone, message } = req.body;
-
-  // Simple validation
-  if (!firstName || !lastName || !email || !phone || !message) {
-    return res.status(400).json({ code: 400, status: "All fields are required." });
-  }
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    return res.status(400).json({ code: 400, status: "Invalid email format." });
-  }
-
-  // Mock email sending (or handle data as needed)
-  console.log("Name:", firstName + " " + lastName);
-  console.log("Email:", email);
-  console.log("Phone:", phone);
-  console.log("Message:", message);
-
-  res.json({ code: 200, status: "Message received successfully" });
+// ================= EMAIL CONFIG =================
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // use TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-// Start the server
-app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
+// Verify email transporter
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("❌ Email transporter error:", error);
+  } else {
+    console.log("✅ Email transporter is ready");
+  }
+});
+
+// ================= ROUTES =================
+
+// Test route
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
+// Contact route
+app.post("/contact", async (req, res) => {
+  const { firstName, lastName, email, phone, message } = req.body;
+
+  // Validation
+  if (!firstName || !lastName || !email || !phone || !message) {
+    return res
+      .status(400)
+      .json({ code: 400, status: "All fields are required." });
+  }
+
+  try {
+    // 1️⃣ EMAIL TO YOU
+    await transporter.sendMail({
+      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      subject: "📩 New Contact Form Message",
+      html: `
+        <h2>New Contact Message</h2>
+        <p><b>Name:</b> ${firstName} ${lastName}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone}</p>
+        <p><b>Message:</b></p>
+        <p>${message}</p>
+      `,
+    });
+
+    // 2️⃣ AUTO-REPLY TO USER
+    await transporter.sendMail({
+      from: `"Rahul Kumar" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Thanks for contacting me 🙌",
+      html: `
+        <p>Hi ${firstName},</p>
+
+        <p>Thank you for reaching out through my portfolio website.</p>
+
+        <p>I’ve received your message and will get back to you as soon as possible.</p>
+
+        <p><b>Your message:</b></p>
+        <blockquote>${message}</blockquote>
+
+        <p>Best regards,<br/>
+        <b>Rahul Kumar</b></p>
+      `,
+    });
+
+    console.log("✅ Email sent + auto-reply sent");
+
+    res.json({
+      code: 200,
+      status: "Message sent successfully",
+    });
+  } catch (error) {
+    console.error("❌ Email error:", error);
+    res.status(500).json({
+      code: 500,
+      status: "Email sending failed",
+    });
+  }
+});
+
+// ================= START SERVER =================
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
